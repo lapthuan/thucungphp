@@ -4,6 +4,7 @@
 		<div class="info">
 			<p><?php echo $_SESSION['TenNhanVien'] ?></p>
 			<a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+			<a href="#"><i class="fa fa-user text-danger"></i> <?=$_SESSION['Quyen'] == "1" ? "Admin" : "Nhân viên"?></a>
 		</div>
 	</div>
 	<ul class="list-sidebar bg-defoult">
