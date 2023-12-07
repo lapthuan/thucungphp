@@ -35,7 +35,7 @@ while ($row = pg_fetch_assoc($result)) {
         <tr>
             <td><?=$row['tentk']?></td>
             <td><?=$row['tennhanvien']?></td>
-            <td><?=$row['quyen']?></td>
+            <td><?=$row['quyen'] == "1" ? "Admin" : "Nhân viên"?></td>
             <td>
                 <div class="d-flex">
                     <a class="btn btn-success"
