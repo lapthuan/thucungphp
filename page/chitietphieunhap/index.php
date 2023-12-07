@@ -2,7 +2,7 @@
     <div class="card-header">
         <h3 class="card-title">Chi tiết phiếu nhập</h3>
         <div class="card-tools d-flex justify-content-between">
-            <a href="?page=chitietphieunhap/manage_chitietphieunhap" class="btn btn-flat btn-success rounded"><span
+            <a href="?page=manage_chitietphieunhap&&id=<?php echo $_GET['id'] ?>" class="btn btn-flat btn-success rounded"><span
                         class="fas fa-plus"></span> Tạo mới</a>
 						<a href="?page=phieunhap" class="btn btn-flat btn-info rounded"><span
                         class="fas fa-backward"></span> Trở về</a>
@@ -12,7 +12,7 @@
     <?php
 // Truy vấn SQL
 $maphieunhap = pg_escape_string($_GET['id']); // Sanitize input
-$sql = "SELECT maphieunhap, sp.tensanpham, soluong, dongia
+$sql = "SELECT maphieunhap,sp.masanpham, sp.tensanpham, soluong, dongia
             FROM public.chitietphieunhap ct
             JOIN sanpham sp ON sp.masanpham = ct.masanpham
             WHERE maphieunhap = '{$maphieunhap}'";
@@ -45,9 +45,11 @@ while ($row = pg_fetch_assoc($result)) {
             <td>
                 <div class="d-flex">
                     <a class="btn btn-success"
-                        href="?page=chitietphieunhap/manage_chitietphieunhap&id=<?php echo $row['maphieunhap'] ?>">Sửa</a>
+                        href="?page=manage_chitietphieunhap&&id=<?php echo $_GET['id'] ?>&&sp=<?php echo $row['masanpham'] ?>">Sửa</a>
                     <a class="btn btn-danger delete_data" href="javascript:void(0)"
-                        data-id="<?php echo $row['maphieunhap'] ?>">Xóa</a>
+                        data-id="<?php echo $row['maphieunhap'] ?>"
+                        data-masanpham="<?php echo $row['masanpham'] ?>"
+                        >Xóa</a>
                 </div>
             </td>
         </tr>
@@ -69,7 +71,7 @@ pg_close($connPG);
 		$(document).ready(function(){
 		$('.delete_data').click(function(){
 			var dataId = $(this).attr('data-id');
-			_conf("Bạn có chắc chắn xóa này vĩnh viễn?","delete_sanpham",[$(this).attr('data-id')])
+			_conf("Bạn có chắc chắn xóa này vĩnh viễn?","delete_chitietphieunhap",[$(this).attr('data-id'),$(this).attr('data-masanpham')])
 
 		})
 		$('#myTable').DataTable({
@@ -79,12 +81,13 @@ pg_close($connPG);
     }
 		});
 	})
-	function delete_sanpham($id){
-
+	function delete_chitietphieunhap($id,$masanpham){
+        console.log('id', $id)
+        console.log('masanpham', $masanpham)
 		$.ajax({
-			url: _base_url_ + 'classes/Master.php?f=delete_sanpham',
+			url: _base_url_ + 'classes/Master.php?f=delete_chitietphieunhap',
 			method:"POST",
-			data:{masanpham: $id},
+			data:{maphieunhap: $id,masanpham: $masanpham},
 			dataType:"json",
 			error:err=>{
 				console.log(err)

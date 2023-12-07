@@ -1,6 +1,13 @@
 <?php require_once 'config.php';?>
 
+<?php
+if (!isset($_SESSION['TenTK'])) {
+    // Nếu không tồn tại hoặc giá trị 'Quyen' là rỗng, quay về trang dangnhap.php
+    header("location: dangnhap.php");
+    exit();
+}
 
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,7 +19,7 @@
 	<div class="main">
 		<aside class="d-flex">
 			<?php include_once "inc/silderbar.php"?>
-			<?php $page = isset($_GET['page']) ? $_GET['page'] : 'home';?>
+			<?php $page = isset($_GET['page']) ? $_GET['page'] : 'sanpham';?>
 
 
 			<div class="w-100 m-4 body-color">

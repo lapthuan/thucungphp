@@ -576,6 +576,98 @@ class Master extends DBConnectionPG
             }
         }
     }
+    public function save_chitietphieunhap()
+    {
+        extract($_POST);
+        if (empty($sp)) {
+            $check = checkExitChiTiet($this->connPG, "chitietphieunhap", "maphieunhap", $id, "masanpham", $masanpham);
+
+            if ($check == 1) {
+                $resp['status'] = 'failed';
+                $resp['msg'] = 'Chi tiết phiếu nhập đã tồn tại';
+                return json_encode($resp, JSON_UNESCAPED_UNICODE);
+            }
+
+            $query = "INSERT INTO chitietphieunhap(maphieunhap, masanpham, soluong, dongia) values ('$maphieunhap', '$masanpham', '$soluong', '$dongia')";
+            $result = pg_query($this->connPG, $query);
+
+            if ($result) {
+                $query2 = "INSERT INTO chitietphieunhap (maphieunhap, masanpham, soluong, dongia) VALUES (?, ?, ?, ?)";
+                $params = array($maphieunhap, $masanpham, $soluong, $dongia);
+                $result2 = sqlsrv_query($this->conn, $query2, $params);
+
+                if ($result2) {
+                    $resp['status'] = 'success';
+                    $resp['msg'] = 'Thêm chi tiết phiếu nhập và đồng bộ thành công';
+                    return json_encode($resp, JSON_UNESCAPED_UNICODE);
+                }
+            }
+        } else {
+            $query = "UPDATE chitietphieunhap SET  soluong = '$soluong', dongia = '$dongia' WHERE maphieunhap = '$id' and masanpham = '$masanpham'";
+            $result = pg_query($this->connPG, $query);
+
+            if ($result) {
+                $query2 = "UPDATE chitietphieunhap SET soluong = (?), dongia = (?) WHERE maphieunhap = (?) and  masanpham = (?)";
+                $params2 = array($soluong, $dongia, $id, $masanpham);
+
+                $result2 = sqlsrv_query($this->conn, $query2, $params2);
+
+                if ($result2) {
+                    $resp['status'] = 'success';
+                    $resp['msg'] = 'Cập nhật chi tiết phiếu nhập thành công';
+                    return json_encode($resp, JSON_UNESCAPED_UNICODE);
+                } else {
+                    return json_encode(sqlsrv_errors(), JSON_UNESCAPED_UNICODE);
+                }
+            }
+        }
+    }
+    public function save_chitiethoadon()
+    {
+        extract($_POST);
+        if (empty($sp)) {
+            $check = checkExitChiTiet($this->connPG, "chitiethoadon", "mahoadon", $id, "masanpham", $masanpham);
+
+            if ($check == 1) {
+                $resp['status'] = 'failed';
+                $resp['msg'] = 'Mã chi tiết hóa đơn đã tồn tại';
+                return json_encode($resp, JSON_UNESCAPED_UNICODE);
+            }
+
+            $query = "INSERT INTO chitiethoadon(mahoadon, masanpham, soluong) values ('$mahoadon', '$masanpham', '$soluong')";
+            $result = pg_query($this->connPG, $query);
+
+            if ($result) {
+                $query2 = "INSERT INTO chitiethoadon (mahoadon, masanpham, soluong) VALUES (?, ?, ?)";
+                $params = array($mahoadon, $masanpham, $soluong);
+                $result2 = sqlsrv_query($this->conn, $query2, $params);
+
+                if ($result2) {
+                    $resp['status'] = 'success';
+                    $resp['msg'] = 'Thêm chi tiết hóa đơn và đồng bộ thành công';
+                    return json_encode($resp, JSON_UNESCAPED_UNICODE);
+                }
+            }
+        } else {
+            $query = "UPDATE chitiethoadon SET  soluong = '$soluong' WHERE mahoadon = '$id' and masanpham = '$masanpham' ";
+            $result = pg_query($this->connPG, $query);
+
+            if ($result) {
+                $query2 = "UPDATE chitiethoadon SET soluong = (?) WHERE mahoadon = (?) and  masanpham = (?)";
+                $params2 = array($soluong, $id, $masanpham);
+
+                $result2 = sqlsrv_query($this->conn, $query2, $params2);
+
+                if ($result2) {
+                    $resp['status'] = 'success';
+                    $resp['msg'] = 'Cập nhật chi tiết hóa đơn thành công';
+                    return json_encode($resp, JSON_UNESCAPED_UNICODE);
+                } else {
+                    return json_encode(sqlsrv_errors(), JSON_UNESCAPED_UNICODE);
+                }
+            }
+        }
+    }
 
     public function delete_sanpham()
     {
@@ -818,7 +910,79 @@ class Master extends DBConnectionPG
             }
         }
     }
+    public function delete_chitietphieunhap()
+    {
+        extract($_POST);
+        $query = "DELETE FROM chitietphieunhap WHERE maphieunhap = '$maphieunhap' and masanpham='$masanpham'";
+        $result = pg_query($this->connPG, $query);
 
+        // Kiểm tra kết quả
+        if ($result) {
+            $query2 = "DELETE FROM chitietphieunhap WHERE maphieunhap = (?)  and masanpham=(?)";
+            $params = array($maphieunhap, $masanpham);
+            $result2 = sqlsrv_query($this->conn, $query2, $params);
+
+            // Kiểm tra kết quả
+            if ($result2) {
+                $resp['status'] = 'success';
+                $resp['msg'] = 'Xóa chi tiết phiếu nhập thành công';
+                return json_encode($resp, JSON_UNESCAPED_UNICODE);
+            }
+        }
+    }
+    public function delete_chitiethoadon()
+    {
+        extract($_POST);
+        $query = "DELETE FROM chitiethoadon WHERE mahoadon = '$mahoadon' and masanpham='$masanpham'";
+        $result = pg_query($this->connPG, $query);
+
+        // Kiểm tra kết quả
+        if ($result) {
+            $query2 = "DELETE FROM chitiethoadon WHERE mahoadon = (?)  and masanpham=(?)";
+            $params = array($mahoadon, $masanpham);
+            $result2 = sqlsrv_query($this->conn, $query2, $params);
+
+            // Kiểm tra kết quả
+            if ($result2) {
+                $resp['status'] = 'success';
+                $resp['msg'] = 'Xóa chi tiết hóa đơn thành công';
+                return json_encode($resp, JSON_UNESCAPED_UNICODE);
+            }
+        }
+    }
+
+    public function login()
+    {
+        extract($_POST);
+        $query = "SELECT tk.*,nv.tennhanvien FROM taikhoan tk  JOIN nhanvien nv ON nv.manhanvien = tk.manhanvien WHERE tentk = '$tentk' AND matkhau = '$matkhau'";
+        $result = pg_query($this->connPG, $query);
+
+        if ($result) {
+            if (pg_num_rows($result) > 0) {
+                $user = pg_fetch_assoc($result);
+
+                $quyen = $user['quyen'];
+                $tentk = $user['tentk'];
+                $tennhanvien = $user['tennhanvien'];
+                $_SESSION['Quyen'] = $quyen;
+                $_SESSION['TenTK'] = $tentk;
+                $_SESSION['TenNhanVien'] = $tennhanvien;
+
+                $resp['status'] = 'success';
+                $resp['msg'] = 'Đăng nhập thành công';
+                return json_encode($resp, JSON_UNESCAPED_UNICODE);
+            } else {
+                $resp['status'] = 'failed';
+                $resp['msg'] = 'Sai tài khoản hoặc mật khẩu';
+                return json_encode($resp, JSON_UNESCAPED_UNICODE);
+            }
+        } else {
+            $resp['status'] = 'failed';
+            $resp['msg'] = 'Lỗi';
+            return json_encode($resp, JSON_UNESCAPED_UNICODE);
+
+        }
+    }
 }
 
 function checkExit($connect, $table, $column, $id)
@@ -831,10 +995,22 @@ function checkExit($connect, $table, $column, $id)
     return $count;
 
 }
+function checkExitChiTiet($connect, $table, $column, $id, $columnSp, $sp)
+{
+    $query = "SELECT COUNT(*) as count FROM $table WHERE  $column = '$id' and $columnSp = '$sp'";
 
+    $result = pg_query($connect, $query);
+    $row = pg_fetch_assoc($result);
+    $count = $row['count'];
+    return $count;
+
+}
 $Master = new Master();
 $action = !isset($_GET['f']) ? 'none' : strtolower($_GET['f']);
 switch ($action) {
+    case 'login':
+        echo $Master->login();
+        break;
     case 'save_sanpham':
         echo $Master->save_sanpham();
         break;
@@ -868,8 +1044,14 @@ switch ($action) {
     case 'save_phieunhap':
         echo $Master->save_phieunhap();
         break;
+    case 'save_chitietphieunhap':
+        echo $Master->save_chitietphieunhap();
+        break;
     case 'save_hoadon':
         echo $Master->save_hoadon();
+        break;
+    case 'save_chitiethoadon':
+        echo $Master->save_chitiethoadon();
         break;
 
     case 'delete_sanpham':
@@ -907,6 +1089,12 @@ switch ($action) {
         break;
     case 'delete_hoadon':
         echo $Master->delete_hoadon();
+        break;
+    case 'delete_chitiethoadon':
+        echo $Master->delete_chitiethoadon();
+        break;
+    case 'delete_chitietphieunhap':
+        echo $Master->delete_chitietphieunhap();
         break;
     default:
         break;

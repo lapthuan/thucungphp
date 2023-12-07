@@ -1,3 +1,12 @@
+
+<?php
+if (isset($_GET['logout']) && $_GET['logout'] == 1) {
+    session_destroy();
+    header("location: dangnhap.php");
+    exit();
+}
+?>
+
 <header class="header">
 	<nav class="navbar navbar-toggleable-md navbar-light pt-0 pb-0 ">
 		<button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
@@ -144,12 +153,11 @@
 					<a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink"
 						data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						<img src="http://via.placeholder.com/160x160" class="user-image" alt="User Image">
-						<span class="hidden-xs">bootstrap develop</span>
+						<span class="hidden-xs"><?php echo $_SESSION['TenNhanVien'] ?></span>
 					</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-						<a class="dropdown-item" href="#">Action</a>
-						<a class="dropdown-item" href="#">Another action</a>
-						<a class="dropdown-item" href="#">Something else here</a>
+						<a class="dropdown-item" href="?logout=1">Đăng xuất</a>
+
 					</div>
 				</li>
 			</ul>
